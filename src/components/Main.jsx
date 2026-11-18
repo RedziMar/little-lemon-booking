@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useReducer } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { fetchAPI, submitAPI } from '../utils/bookingAPI';
@@ -7,14 +8,16 @@ import ConfirmedBooking from './ConfirmedBooking';
 import Chicago from './Chicago';
 import Specials from './Specials';
 
-function initializeTimes() {
+export function initializeTimes() {
   return fetchAPI(new Date());
 }
 
-function updateTimes(state, action) {
+export function updateTimes(state, action) {
   switch (action.type) {
     case 'UPDATE_TIMES': {
-      const selectedDate = action.date ? new Date(action.date) : new Date();
+      const selectedDate = action.date
+        ? new Date(`${action.date}T00:00:00`)
+        : new Date();
       return fetchAPI(selectedDate);
     }
     case 'BOOK_TIME':
@@ -74,6 +77,7 @@ function Main() {
             </section>
           }
         />
+        <Route path="*" element={<HomePage />} />
       </Routes>
     </main>
   );

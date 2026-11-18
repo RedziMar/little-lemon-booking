@@ -111,7 +111,12 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
   };
 
   return (
-    <form className="booking-form" onSubmit={handleSubmit} noValidate>
+    <form
+      className="booking-form"
+      onSubmit={handleSubmit}
+      aria-label="Table reservation form"
+      noValidate
+    >
       <div className="form-row">
         <div className="form-group">
           <label htmlFor="res-name">Full Name</label>
@@ -127,9 +132,10 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
             onChange={handleChange}
             onBlur={handleBlur}
             aria-invalid={Boolean(touched.name && errors.name)}
+            aria-describedby={touched.name && errors.name ? 'res-name-error' : undefined}
           />
           {touched.name && errors.name && (
-            <span className="error-text" role="alert">
+            <span id="res-name-error" className="error-text" role="alert">
               {errors.name}
             </span>
           )}
@@ -147,9 +153,10 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
             onChange={handleChange}
             onBlur={handleBlur}
             aria-invalid={Boolean(touched.email && errors.email)}
+            aria-describedby={touched.email && errors.email ? 'res-email-error' : undefined}
           />
           {touched.email && errors.email && (
-            <span className="error-text" role="alert">
+            <span id="res-email-error" className="error-text" role="alert">
               {errors.email}
             </span>
           )}
@@ -169,9 +176,10 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
             onChange={handleChange}
             onBlur={handleBlur}
             aria-invalid={Boolean(touched.date && errors.date)}
+            aria-describedby={touched.date && errors.date ? 'res-date-error' : undefined}
           />
           {touched.date && errors.date && (
-            <span className="error-text" role="alert">
+            <span id="res-date-error" className="error-text" role="alert">
               {errors.date}
             </span>
           )}
@@ -188,6 +196,7 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
             onBlur={handleBlur}
             disabled={availableTimes.length === 0}
             aria-invalid={Boolean(touched.time && errors.time)}
+            aria-describedby={touched.time && errors.time ? 'res-time-error' : undefined}
           >
             {availableTimes.map((slot) => (
               <option key={slot} value={slot}>
@@ -196,7 +205,7 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
             ))}
           </select>
           {touched.time && errors.time && (
-            <span className="error-text" role="alert">
+            <span id="res-time-error" className="error-text" role="alert">
               {errors.time}
             </span>
           )}
@@ -217,9 +226,10 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
           onChange={handleChange}
           onBlur={handleBlur}
           aria-invalid={Boolean(touched.guests && errors.guests)}
+          aria-describedby={touched.guests && errors.guests ? 'guests-error' : undefined}
         />
         {touched.guests && errors.guests && (
-          <span className="error-text" role="alert">
+          <span id="guests-error" className="error-text" role="alert">
             {errors.guests}
           </span>
         )}
@@ -234,7 +244,7 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
         type="submit"
         className="btn-primary"
         disabled={!isFormValid}
-        aria-label="Make Your reservation"
+        aria-label="On Click"
       >
         Make Your reservation
       </button>

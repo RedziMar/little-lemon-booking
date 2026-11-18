@@ -10,8 +10,14 @@ function OccasionDropdown({ value, onChange }) {
     setIsOpen(false);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      setIsOpen(false);
+    }
+  };
+
   return (
-    <div className="form-group">
+    <div className="form-group" onKeyDown={handleKeyDown}>
       <span className="dropdown-label" id="occasion-label">
         Select Occasion
       </span>
@@ -28,20 +34,34 @@ function OccasionDropdown({ value, onChange }) {
             {!value && <span aria-hidden="true">🥂</span>}
             <span>{value || 'Occasion'}</span>
           </span>
-          <span className={`chevron ${isOpen || value ? 'rotated' : ''}`} aria-hidden="true">
+          <span
+            className={`chevron ${isOpen || value ? 'rotated' : ''}`}
+            aria-hidden="true"
+          >
             ⌄
           </span>
         </button>
 
         {isOpen && (
-          <ul className="occasion-menu" role="listbox" aria-labelledby="occasion-label">
+          <ul
+            className="occasion-menu"
+            role="listbox"
+            aria-labelledby="occasion-label"
+          >
             {OCCASIONS.map((occasion) => (
               <li
                 key={occasion}
                 role="option"
+                tabIndex={0}
                 aria-selected={value === occasion}
                 className="occasion-option"
                 onClick={() => handleSelect(occasion)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleSelect(occasion);
+                  }
+                }}
               >
                 {occasion}
               </li>
