@@ -39,7 +39,100 @@ body {
   background-color: var(--color-white);
 }
 
-/* Keeps Header and Nav aligned side-by-side without a wrapper div in App.jsx */
+/* ---------- STEP 2: HEADINGS, PARAGRAPHS & SPANS ---------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-highlight-dark);
+  line-height: 1.1;
+}
+
+h1,
+h2 {
+  font-family: var(--font-display);
+}
+
+h1 {
+  font-size: 4rem; /* 64px Display Title */
+  font-weight: 500;
+}
+
+h2 {
+  font-size: 2.5rem; /* 40px Subtitle */
+  font-weight: 400;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-body);
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.125rem; /* 18px Card Title */
+}
+
+p {
+  font-family: var(--font-body);
+  font-size: 1rem; /* 16px */
+  line-height: 1.5;
+  max-width: 65ch;
+}
+
+span {
+  font-family: var(--font-body);
+  font-size: inherit;
+}
+
+/* ---------- STEP 3: NAVIGATION ELEMENTS (nav, ul, li, a) ---------- */
+nav {
+  display: flex;
+  align-items: center;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  align-items: center;
+}
+
+nav li {
+  display: inline-block;
+}
+
+nav a {
+  text-decoration: none;
+  color: var(--color-highlight-dark);
+  font-weight: 700;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+nav a:hover,
+nav a:focus-visible {
+  color: var(--color-primary-green);
+}
+
+/* ---------- STEP 4: IMAGES ---------- */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ---------- ROOT RESPONSIVE GRID ---------- */
 #root {
   display: grid;
   grid-template-columns: 1fr minmax(0, 240px) minmax(0, 880px) 1fr;
