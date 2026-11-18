@@ -1,8 +1,9 @@
 import { useReducer } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { fetchAPI } from '../utils/bookingAPI';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import { fetchAPI, submitAPI } from '../utils/bookingAPI';
 import HomePage from './HomePage';
 import BookingPage from './BookingPage';
+import ConfirmedBooking from './ConfirmedBooking';
 import Chicago from './Chicago';
 import Specials from './Specials';
 
@@ -29,6 +30,15 @@ function Main() {
     [],
     initializeTimes
   );
+  const navigate = useNavigate();
+
+  function submitForm(formData) {
+    const success = submitAPI(formData);
+    if (success) {
+      dispatch({ type: 'BOOK_TIME', time: formData.time });
+      navigate('/confirmed', { state: formData });
+    }
+  }
 
   return (
     <main className="site-main">
@@ -39,9 +49,14 @@ function Main() {
         <Route
           path="/booking"
           element={
-            <BookingPage availableTimes={availableTimes} dispatch={dispatch} />
+            <BookingPage
+              availableTimes={availableTimes}
+              dispatch={dispatch}
+              submitForm={submitForm}
+            />
           }
         />
+        <Route path="/confirmed" element={<ConfirmedBooking />} />
         <Route path="/order-online" element={<Specials />} />
         <Route
           path="/login"

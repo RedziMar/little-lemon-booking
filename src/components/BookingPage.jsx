@@ -2,7 +2,7 @@ import { useState } from 'react';
 import BookingForm from './BookingForm';
 import BookingSlot from './BookingSlot';
 
-function BookingPage({ availableTimes, dispatch }) {
+function BookingPage({ availableTimes, dispatch, submitForm }) {
   const [selectedTime, setSelectedTime] = useState(availableTimes[0] || '');
 
   return (
@@ -37,6 +37,7 @@ function BookingPage({ availableTimes, dispatch }) {
           <BookingForm
             availableTimes={availableTimes}
             dispatch={dispatch}
+            submitForm={submitForm}
             onTimeSelect={setSelectedTime}
           />
         </div>

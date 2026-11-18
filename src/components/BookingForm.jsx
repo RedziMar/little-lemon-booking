@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import OccasionDropdown from './OccasionDropdown';
-import { submitAPI } from '../utils/bookingAPI';
 
-function BookingForm({ availableTimes, dispatch, onTimeSelect }) {
+function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -11,7 +10,6 @@ function BookingForm({ availableTimes, dispatch, onTimeSelect }) {
     guests: 2,
     occasion: '',
   });
-  const [isConfirmed, setIsConfirmed] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,53 +41,8 @@ function BookingForm({ availableTimes, dispatch, onTimeSelect }) {
       ? formData.time
       : availableTimes[0] || formData.time;
 
-    const submittedData = { ...formData, time: chosenTime };
-    const success = submitAPI(submittedData);
-
-    if (success) {
-      dispatch({ type: 'BOOK_TIME', time: chosenTime });
-      setFormData(submittedData);
-      setIsConfirmed(true);
-    }
+    submitForm({ ...formData, time: chosenTime });
   };
-
-  const handleReset = () => {
-    setIsConfirmed(false);
-    const nextDefaultTime = availableTimes[0] || '17:00';
-    if (onTimeSelect) {
-      onTimeSelect(nextDefaultTime);
-    }
-    setFormData({
-      name: '',
-      email: '',
-      date: '',
-      time: nextDefaultTime,
-      guests: 2,
-      occasion: '',
-    });
-  };
-
-  if (isConfirmed) {
-    const { name, email, date, time, guests, occasion } = formData;
-    return (
-      <div className="confirmation-card" role="status" aria-live="polite">
-        <h3>Reservation Confirmed!</h3>
-        <p>
-          Thank you, <strong>{name}</strong>. Your table at Little Lemon Chicago is reserved.
-        </p>
-        <ul className="confirmation-details">
-          <li><strong>Date:</strong> {date}</li>
-          <li><strong>Time:</strong> {time}</li>
-          <li><strong>Guests:</strong> {guests}</li>
-          <li><strong>Occasion:</strong> {occasion || 'Standard Dining'}</li>
-          <li><strong>Confirmation sent to:</strong> {email}</li>
-        </ul>
-        <button type="button" className="btn-primary" onClick={handleReset}>
-          Make Another Reservation
-        </button>
-      </div>
-    );
-  }
 
   return (
     <form className="booking-form" onSubmit={handleSubmit}>
