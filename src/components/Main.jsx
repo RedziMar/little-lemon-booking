@@ -1,21 +1,22 @@
 import { useReducer } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { fetchAPI } from '../utils/bookingAPI';
 import HomePage from './HomePage';
 import BookingPage from './BookingPage';
 import Chicago from './Chicago';
 import Specials from './Specials';
 
 function initializeTimes() {
-  return ['17:00', '18:00', '19:00', '20:00', '21:00', '22:00'];
+  return fetchAPI(new Date());
 }
 
 function updateTimes(state, action) {
   switch (action.type) {
-    case 'UPDATE_TIMES':
-      // Returns available times for the selected date (API will be connected later)
-      return initializeTimes();
+    case 'UPDATE_TIMES': {
+      const selectedDate = action.date ? new Date(action.date) : new Date();
+      return fetchAPI(selectedDate);
+    }
     case 'BOOK_TIME':
-      // Removes the booked slot so availability updates across components
       return state.filter((slot) => slot !== action.time);
     default:
       return state;

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import OccasionDropdown from './OccasionDropdown';
+import { submitAPI } from '../utils/bookingAPI';
 
 function BookingForm({ availableTimes, dispatch, onTimeSelect }) {
   const [formData, setFormData] = useState({
@@ -42,9 +43,14 @@ function BookingForm({ availableTimes, dispatch, onTimeSelect }) {
       ? formData.time
       : availableTimes[0] || formData.time;
 
-    dispatch({ type: 'BOOK_TIME', time: chosenTime });
-    setFormData((prev) => ({ ...prev, time: chosenTime }));
-    setIsConfirmed(true);
+    const submittedData = { ...formData, time: chosenTime };
+    const success = submitAPI(submittedData);
+
+    if (success) {
+      dispatch({ type: 'BOOK_TIME', time: chosenTime });
+      setFormData(submittedData);
+      setIsConfirmed(true);
+    }
   };
 
   const handleReset = () => {
