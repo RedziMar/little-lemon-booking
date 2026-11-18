@@ -1,21 +1,12 @@
 import { useState } from 'react';
 import OccasionDropdown from './OccasionDropdown';
 
-function BookingForm() {
-  const [availableTimes] = useState([
-    '17:00',
-    '18:00',
-    '19:00',
-    '20:00',
-    '21:00',
-    '22:00',
-  ]);
-
+function BookingForm({ availableTimes, dispatch, onTimeSelect }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     date: '',
-    time: '18:00',
+    time: availableTimes[0] || '17:00',
     guests: 2,
     occasion: '',
   });
@@ -23,6 +14,15 @@ function BookingForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === 'date') {
+      dispatch({ type: 'UPDATE_TIMES', date: value });
+    }
+
+    if (name === 'time' && onTimeSelect) {
+      onTimeSelect(value);
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -38,16 +38,26 @@ function BookingForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const chosenTime = availableTimes.includes(formData.time)
+      ? formData.time
+      : availableTimes[0] || formData.time;
+
+    dispatch({ type: 'BOOK_TIME', time: chosenTime });
+    setFormData((prev) => ({ ...prev, time: chosenTime }));
     setIsConfirmed(true);
   };
 
   const handleReset = () => {
     setIsConfirmed(false);
+    const nextDefaultTime = availableTimes[0] || '17:00';
+    if (onTimeSelect) {
+      onTimeSelect(nextDefaultTime);
+    }
     setFormData({
       name: '',
       email: '',
       date: '',
-      time: '18:00',
+      time: nextDefaultTime,
       guests: 2,
       occasion: '',
     });
@@ -123,8 +133,13 @@ function BookingForm() {
           <select
             id="res-time"
             name="time"
-            value={formData.time}
+            value={
+              availableTimes.includes(formData.time)
+                ? formData.time
+                : availableTimes[0] || ''
+            }
             onChange={handleChange}
+            disabled={availableTimes.length === 0}
           >
             {availableTimes.map((slot) => (
               <option key={slot} value={slot}>
@@ -155,7 +170,11 @@ function BookingForm() {
         onChange={handleOccasionChange}
       />
 
-      <button type="submit" className="btn-primary">
+      <button
+        type="submit"
+        className="btn-primary"
+        disabled={availableTimes.length === 0}
+      >
         Make Your reservation
       </button>
     </form>

@@ -455,6 +455,64 @@
   color: var(--color-white);
 }
 
+
+/* Available Booking Slots Panel */
+.slots-panel {
+  background-color: var(--color-highlight-light);
+  padding: 16px 20px;
+  border-radius: var(--radius-dropdown);
+  margin-bottom: 24px;
+}
+
+.slots-heading {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-primary-green);
+  margin-bottom: 12px;
+}
+
+.slots-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.booking-slot {
+  background-color: var(--color-white);
+  border: 1px solid #d4dad7;
+  border-radius: var(--radius-dropdown);
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-highlight-dark);
+}
+
+.booking-slot.selected {
+  background-color: var(--color-primary-green);
+  color: var(--color-white);
+  border-color: var(--color-primary-green);
+}
+
+.slot-status {
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.no-slots-msg {
+  color: var(--color-primary-green);
+  font-weight: 700;
+}
+
+@media (max-width: 550px) {
+  .slots-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 /* Booking Confirmation Box */
 .confirmation-card {
   background-color: #f2f7f4;

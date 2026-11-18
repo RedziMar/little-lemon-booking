@@ -1,6 +1,10 @@
+import { useState } from 'react';
 import BookingForm from './BookingForm';
+import BookingSlot from './BookingSlot';
 
-function BookingPage() {
+function BookingPage({ availableTimes, dispatch }) {
+  const [selectedTime, setSelectedTime] = useState(availableTimes[0] || '');
+
   return (
     <section className="reservations-section">
       <div className="container">
@@ -10,7 +14,31 @@ function BookingPage() {
             Book your table online and let us know if you are celebrating a
             special occasion.
           </p>
-          <BookingForm />
+
+          <div className="slots-panel" aria-label="Available booking slots">
+            <h2 className="slots-heading">Available Time Slots</h2>
+            {availableTimes.length > 0 ? (
+              <ul className="slots-list">
+                {availableTimes.map((time) => (
+                  <BookingSlot
+                    key={time}
+                    time={time}
+                    isSelected={selectedTime === time}
+                  />
+                ))}
+              </ul>
+            ) : (
+              <p className="no-slots-msg">
+                All slots for this date are currently booked. Please choose another date.
+              </p>
+            )}
+          </div>
+
+          <BookingForm
+            availableTimes={availableTimes}
+            dispatch={dispatch}
+            onTimeSelect={setSelectedTime}
+          />
         </div>
       </div>
     </section>
