@@ -624,3 +624,21 @@
     grid-template-columns: 1fr;
   }
 }
+.btn-primary:disabled {
+  background-color: #d6d9d7;
+  color: #777777;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.form-group input[aria-invalid='true'],
+.form-group select[aria-invalid='true'] {
+  border-color: #c62828;
+  background-color: #fff8f8;
+}
+
+.error-text {
+  color: #c62828;
+  font-size: 14px;
+  font-weight: 700;
+}

@@ -1,15 +1,65 @@
 import { useState } from 'react';
 import OccasionDropdown from './OccasionDropdown';
 
+function getTodayString() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function validateBooking(data, availableTimes) {
+  const errors = {};
+  const today = getTodayString();
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const guestCount = Number(data.guests);
+
+  if (!data.name.trim() || data.name.trim().length < 2) {
+    errors.name = 'Please enter your full name (at least 2 characters).';
+  }
+
+  if (!data.email.trim() || !emailPattern.test(data.email.trim())) {
+    errors.email = 'Please enter a valid email address.';
+  }
+
+  if (!data.date) {
+    errors.date = 'Please choose a reservation date.';
+  } else if (data.date < today) {
+    errors.date = 'Reservation date cannot be in the past.';
+  }
+
+  if (availableTimes.length === 0 || !data.time) {
+    errors.time = 'No available times for the selected date.';
+  }
+
+  if (Number.isNaN(guestCount) || guestCount < 1 || guestCount > 10) {
+    errors.guests = 'Number of guests must be between 1 and 10.';
+  }
+
+  return errors;
+}
+
 function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
+  const today = getTodayString();
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    date: '',
+    date: today,
     time: availableTimes[0] || '17:00',
     guests: 2,
     occasion: '',
   });
+
+  const [touched, setTouched] = useState({});
+
+  const activeTime = availableTimes.includes(formData.time)
+    ? formData.time
+    : availableTimes[0] || '';
+
+  const errors = validateBooking({ ...formData, time: activeTime }, availableTimes);
+  const isFormValid = Object.keys(errors).length === 0;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,6 +78,14 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
     }));
   };
 
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setTouched((prev) => ({
+      ...prev,
+      [name]: true,
+    }));
+  };
+
   const handleOccasionChange = (occasion) => {
     setFormData((prev) => ({
       ...prev,
@@ -37,15 +95,23 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const chosenTime = availableTimes.includes(formData.time)
-      ? formData.time
-      : availableTimes[0] || formData.time;
+    setTouched({
+      name: true,
+      email: true,
+      date: true,
+      time: true,
+      guests: true,
+    });
 
-    submitForm({ ...formData, time: chosenTime });
+    if (!isFormValid) {
+      return;
+    }
+
+    submitForm({ ...formData, time: activeTime });
   };
 
   return (
-    <form className="booking-form" onSubmit={handleSubmit}>
+    <form className="booking-form" onSubmit={handleSubmit} noValidate>
       <div className="form-row">
         <div className="form-group">
           <label htmlFor="res-name">Full Name</label>
@@ -54,10 +120,19 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
             name="name"
             type="text"
             required
+            minLength={2}
+            maxLength={60}
             placeholder="e.g., Tilly Smith"
             value={formData.name}
             onChange={handleChange}
+            onBlur={handleBlur}
+            aria-invalid={Boolean(touched.name && errors.name)}
           />
+          {touched.name && errors.name && (
+            <span className="error-text" role="alert">
+              {errors.name}
+            </span>
+          )}
         </div>
 
         <div className="form-group">
@@ -70,7 +145,14 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
             placeholder="tilly@example.com"
             value={formData.email}
             onChange={handleChange}
+            onBlur={handleBlur}
+            aria-invalid={Boolean(touched.email && errors.email)}
           />
+          {touched.email && errors.email && (
+            <span className="error-text" role="alert">
+              {errors.email}
+            </span>
+          )}
         </div>
       </div>
 
@@ -82,9 +164,17 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
             name="date"
             type="date"
             required
+            min={today}
             value={formData.date}
             onChange={handleChange}
+            onBlur={handleBlur}
+            aria-invalid={Boolean(touched.date && errors.date)}
           />
+          {touched.date && errors.date && (
+            <span className="error-text" role="alert">
+              {errors.date}
+            </span>
+          )}
         </div>
 
         <div className="form-group">
@@ -92,13 +182,12 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
           <select
             id="res-time"
             name="time"
-            value={
-              availableTimes.includes(formData.time)
-                ? formData.time
-                : availableTimes[0] || ''
-            }
+            required
+            value={activeTime}
             onChange={handleChange}
+            onBlur={handleBlur}
             disabled={availableTimes.length === 0}
+            aria-invalid={Boolean(touched.time && errors.time)}
           >
             {availableTimes.map((slot) => (
               <option key={slot} value={slot}>
@@ -106,6 +195,11 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
               </option>
             ))}
           </select>
+          {touched.time && errors.time && (
+            <span className="error-text" role="alert">
+              {errors.time}
+            </span>
+          )}
         </div>
       </div>
 
@@ -121,7 +215,14 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
           required
           value={formData.guests}
           onChange={handleChange}
+          onBlur={handleBlur}
+          aria-invalid={Boolean(touched.guests && errors.guests)}
         />
+        {touched.guests && errors.guests && (
+          <span className="error-text" role="alert">
+            {errors.guests}
+          </span>
+        )}
       </div>
 
       <OccasionDropdown
@@ -132,7 +233,8 @@ function BookingForm({ availableTimes, dispatch, submitForm, onTimeSelect }) {
       <button
         type="submit"
         className="btn-primary"
-        disabled={availableTimes.length === 0}
+        disabled={!isFormValid}
+        aria-label="Make Your reservation"
       >
         Make Your reservation
       </button>
