@@ -1,9 +1,16 @@
 import { useState } from 'react';
 import OccasionDropdown from './OccasionDropdown';
 
-const AVAILABLE_TIMES = ['17:00', '18:00', '19:00', '20:00', '21:00', '22:00'];
-
 function BookingForm() {
+  const [availableTimes] = useState([
+    '17:00',
+    '18:00',
+    '19:00',
+    '20:00',
+    '21:00',
+    '22:00',
+  ]);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -100,7 +107,7 @@ function BookingForm() {
 
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="res-date">Choose Date</label>
+          <label htmlFor="res-date">Choose date</label>
           <input
             id="res-date"
             name="date"
@@ -112,14 +119,14 @@ function BookingForm() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="res-time">Choose Time</label>
+          <label htmlFor="res-time">Choose time</label>
           <select
             id="res-time"
             name="time"
             value={formData.time}
             onChange={handleChange}
           >
-            {AVAILABLE_TIMES.map((slot) => (
+            {availableTimes.map((slot) => (
               <option key={slot} value={slot}>
                 {slot}
               </option>
@@ -129,11 +136,12 @@ function BookingForm() {
       </div>
 
       <div className="form-group">
-        <label htmlFor="res-guests">Number of Guests</label>
+        <label htmlFor="guests">Number of guests</label>
         <input
-          id="res-guests"
+          id="guests"
           name="guests"
           type="number"
+          placeholder="1"
           min="1"
           max="10"
           required
@@ -148,7 +156,7 @@ function BookingForm() {
       />
 
       <button type="submit" className="btn-primary">
-        Confirm Reservation
+        Make Your reservation
       </button>
     </form>
   );
